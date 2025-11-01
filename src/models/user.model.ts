@@ -6,6 +6,7 @@ export interface UserAttributes {
     password: string;
     firstName: string;
     lastName: string;
+    role?: "admin" | "user" | "customer";
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -16,6 +17,7 @@ class User extends Model<UserAttributes> implements UserAttributes {
     public password!: string;
     public firstName!: string
     public lastName!: string;
+    public role!: "admin" | "user" | "customer";
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -44,6 +46,11 @@ const userModel = (sequelize: Sequelize): typeof User => {
         lastName: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        role: {
+            type: DataTypes.ENUM("admin", "user", "customer"),
+            allowNull: false,
+            defaultValue: "user"
         }
     }, {
         sequelize,

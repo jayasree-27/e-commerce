@@ -1,6 +1,6 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-interface ProductAttributes {
+export interface ProductAttributes {
     id?: number;
     name: string,
     description: string;
