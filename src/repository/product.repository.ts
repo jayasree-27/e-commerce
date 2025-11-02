@@ -1,11 +1,11 @@
 import db from "../config/db";
 import { type ProductAttributes} from "../models/product.model";
 
-export const createProductService = async (data: ProductAttributes) => {
+export const createProduct = async (data: ProductAttributes) => {
     return await db.Product.create(data);
 };
 
-export const updateProductService = async (id: number, data: any) => {
+export const updateProduct= async (id: number, data: any) => {
     const product = await db.Product.findByPk(id);
     if (!product) throw new Error("Product not found");
 
@@ -13,7 +13,7 @@ export const updateProductService = async (id: number, data: any) => {
     return product;
 };
 
-export const deleteProductService = async (id: number) => {
+export const deleteProduct = async (id: number) => {
     const product = await db.Product.findByPk(id);
     if (!product) throw new Error("Product not found");
 
@@ -21,6 +21,6 @@ export const deleteProductService = async (id: number) => {
     return { message: "Product deleted successfully" };
 };
 
-export const getAllProductsService = async () => {
+export const getAllProducts = async () => {
     return await db.Product.findAll();
 };

@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf dist",
-    "start": "npm run clean && tsc && nodemon dist/index.js",
+    "start": "tsc && nodemon dist/index.js",
     "tsc": "tsc",
     "start:ts": "tsc -w",
     "start:js": "dist/index.js && nodemon dist/index.js",
