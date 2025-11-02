@@ -24,10 +24,3 @@ export const deleteProductService = async (id: number) => {
 export const getAllProductsService = async () => {
     return await db.Product.findAll();
 };
-
-export default{
-    createProductService,
-    updateProductService,
-    deleteProductService,
-    getAllProductsService,
-}

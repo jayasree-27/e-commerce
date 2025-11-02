@@ -8,8 +8,3 @@ export const authorizeRoles = (...allowedRoles: string[]) => {
         next();
     };
 };
-
-
-export default{
-    authorizeRoles,
-}

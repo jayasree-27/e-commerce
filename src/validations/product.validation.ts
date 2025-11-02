@@ -1,4 +1,3 @@
-import { create } from "domain";
 import Joi from "joi";
 
 export const createProductSchema = Joi.object({
@@ -25,8 +24,4 @@ export const updateProductSchema = Joi.object({
 });
 
 
-export default{
-    createProductSchema,
-    updateProductSchema,
-}
 

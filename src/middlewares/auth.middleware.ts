@@ -21,6 +21,3 @@ export const authMiddleware = (req: authRequest, res: Response, next: NextFuncti
     }
 };
 
-export default {
-    authMiddleware,
-}

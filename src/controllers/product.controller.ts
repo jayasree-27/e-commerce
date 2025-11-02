@@ -40,10 +40,4 @@ export const getAllProductsController = async (req: Request, res: Response) => {
     res.json(products);
 };
 
-export default{
-    createProductController,
-    updateProductController,
-    deleteProductController,
-    getAllProductsController,
-}
 

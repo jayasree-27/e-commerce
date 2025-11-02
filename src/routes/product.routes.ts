@@ -8,13 +8,12 @@ import {
 
 import { authMiddleware } from "../middlewares/auth.middleware"; 
 import { authorizeRoles } from "../middlewares/roleauth.middleware";
-import {createProductSchema,updateProductSchema} from "../validations/product.validation";
 import { validate } from "../middlewares/validate.middleware";
-import { valid } from "joi";
+import { createProductSchema,updateProductSchema } from "@/validations/product.validation";
 
 const router = Router();
 
-router.get("/", getAllProductsController);
+router.get("/", authMiddleware,authorizeRoles("admin"),getAllProductsController);
 router.post(
     "/",
     authMiddleware,
