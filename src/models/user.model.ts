@@ -62,4 +62,5 @@ const userModel = (sequelize: Sequelize): typeof User => {
 }
 
 export default userModel;
+export { User };
 

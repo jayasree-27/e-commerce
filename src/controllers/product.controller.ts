@@ -1,44 +1,129 @@
 import { Request, Response } from "express";
 import {
     createProduct,
+    findProductById,
     updateProduct,
     deleteProduct,
-    getAllProducts
+    findAllProducts
 } from "../repository/product.repository";
-import { Certificate } from "crypto";
+import db from "../config/db";
 
-export const createProductController = async (req: Request, res: Response) => {
+interface authRequest extends Request {
+    user?: any;
+}
+
+export const createProductController = async (req: authRequest, res: Response) => {
     try {
-        const product = await createProduct(req.body);
-        res.status(201).json(product);
-    } catch (err: any) {
-        res.status(400).json({ message: err.message });
+        const { name, description, price, stock } = req.body;
+        const user = req.user!;
+
+        const product = await createProduct(
+            { name, description, price, stock } as any,
+            user.id
+        );
+
+        return res.status(201).json({
+            message: "Product created successfully",
+            product
+        });
+
+    } catch (error: any) {
+        return res.status(500).json({ message: error.message || "Product creation failed" });
     }
 };
 
-export const updateProductController = async (req: Request, res: Response) => {
+
+export const getAllProductsController = async (req: authRequest, res: Response) => {
     try {
-        const id = Number(req.params.id);
-        const product = await updateProduct(id, req.body);
-        res.json(product);
-    } catch (err: any) {
-        res.status(400).json({ message: err.message });
+        const user = req.user!;
+
+        if (user.role !== "admin") {
+            return res.status(403).json({ message: "Access denied. Only admin can view all products" });
+        }
+
+        const products = await findAllProducts();
+
+        return res.status(200).json({
+            message: "Products fetched successfully",
+            count: products.length,
+            products
+        });
+
+    } catch (error: any) {
+        return res.status(500).json({ message: error.message || "Failed to fetch products" });
     }
 };
 
-export const deleteProductController = async (req: Request, res: Response) => {
+
+export const getProductByIdController = async (req: authRequest, res: Response) => {
     try {
-        const id = Number(req.params.id);
-        const msg = await deleteProduct(id);
-        res.json(msg);
-    } catch (err: any) {
-        res.status(400).json({ message: err.message });
+        const id = parseInt(req.params.id);
+        const user = req.user!;
+
+        const product: any = await findProductById(id);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+
+        if (user.role !== "admin") {
+            const userProduct = await db.UserProduct.findOne({
+                where: { userId: user.id, productId: product.id }
+            });
+            if (!userProduct) {
+                return res.status(403).json({ message: "Not authorized to access this product" });
+            }
+        }
+
+        return res.status(200).json({
+            message: "Product fetched successfully",
+            product
+        });
+
+    } catch (error: any) {
+        return res.status(500).json({ message: error.message || "Failed to fetch product" });
     }
 };
 
-export const getAllProductsController = async (req: Request, res: Response) => {
-    const products = await getAllProducts();
-    res.json(products);
+
+export const updateProductController = async (req: authRequest, res: Response) => {
+    try {
+        const id = parseInt(req.params.id);
+        const user = req.user!;
+
+        const product: any = await findProductById(id);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+
+        if (user.role !== "admin") {
+            return res.status(403).json({ message: "Only admin can update products" });
+        }
+
+        const updatedProduct = await updateProduct(product, req.body);
+
+        return res.status(200).json({
+            message: "Product updated successfully",
+            product: updatedProduct
+        });
+
+    } catch (error: any) {
+        return res.status(500).json({ message: error.message || "Product update failed" });
+    }
 };
 
 
+export const deleteProductController = async (req: authRequest, res: Response) => {
+    try {
+        const id = parseInt(req.params.id);
+        const user = req.user!;
+
+        const product: any = await findProductById(id);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+
+        if (user.role !== "admin") {
+            return res.status(403).json({ message: "Only admin can delete products" });
+        }
+
+        await deleteProduct(product);
+        return res.status(200).json({ message: "Product deleted successfully" });
+
+    } catch (error: any) {
+        return res.status(500).json({ message: error.message || "Product delete failed" });
+    }
+};

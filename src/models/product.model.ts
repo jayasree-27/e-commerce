@@ -52,4 +52,5 @@ const ProductModel = (sequelize: Sequelize): typeof Product => {
 }
 
 export default ProductModel;
+export { Product };
 
